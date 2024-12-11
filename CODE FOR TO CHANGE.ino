@@ -67,9 +67,9 @@ SoftwareSerial mySerial(12, 3);
    -----------------------------------------------------------
 */
 
-#define RESPONSE_SIZE 254  // 
-#define MESSAGE_SIZE 254  // 
-#define COMMANDS_SIZE 50  // 
+#define RESPONSE_SIZE 254  //
+#define MESSAGE_SIZE 254  //
+#define COMMANDS_SIZE 50  //
 
 #define TIMEOUT 5000
 
