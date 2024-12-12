@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "k2w2J0lIKEM=",
+  "dgSpecHash": "M2oGgMBklZ4=",
   "success": true,
-  "projectFilePath": "c:\\Users\\Willian\\Desktop\\arduino\\MetavixDispenser.csproj",
+  "projectFilePath": "C:\\Users\\Willian\\Desktop\\arduino\\MetavixDispenser.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Willian\\.nuget\\packages\\ftd2xx.net\\1.2.1\\ftd2xx.net.1.2.1.nupkg.sha512",
     "C:\\Users\\Willian\\.nuget\\packages\\runtime.linux-arm.runtime.native.system.io.ports\\7.0.0\\runtime.linux-arm.runtime.native.system.io.ports.7.0.0.nupkg.sha512",
