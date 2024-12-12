@@ -1,0 +1,159 @@
+...    ------------------------ CRC of dispenser ----------------------------------
+...    ----------------------------------------------------------------------------
+... */
+...
+... unsigned short Calculate_CRC_CCITT(const unsigned char* buffer, int size) {
+...   unsigned short tmp;
+...   unsigned short crc = 0xffff;
+...   for (int i = 0; i < size ; i++) {
+...     tmp = (crc >> 8) ^ buffer[i];
+...     crc = (crc << 8) ^ CRC_CCITT_TABLE[tmp];
+...   }
+...   return crc;
+... }
+...
+... void decimalToHexaDispenser(uint16_t decimal, int len) {
+...   int high_byte = (decimal >> 8) & 0xff;
+...   int low_byte = decimal & 0xff;
+...   commands[len + 1] = char(low_byte);
+...   commands[len] = char(high_byte);
+...   delay(5);
+... }
+...
+... void sendAck() {
+...   Serial2.write(ASCII_ACK);
+...   debugMetavix(F("Send ACK"));
+... }
+...
+...
+... void intToBytes(int number, int arrayPosition) {
+...   for (int i = 2; i >= 0; i--) {
+...     commands[i + arrayPosition] = (byte) (number % 10) + '0';
+...     number = number / 10;
+...     number = number / 10;
+...   }
+... }
+...
+... void debugMetavix(String msg, int temp) {
+...   if (debugFlag) {
+...     Serial.print(msg);
+...     delay(temp);
+...   }
+... }
+... void debugMetavixln(String msg, int temp) {
+...   if (debugFlag) {
+...     Serial.println(msg);
+...     delay(temp);
+...   }
+... }
+Este es un código C++ para un dispensador de monedas automático. Parece ser parte de un sistema más grande que se comunica
+con un dispositivo host a través de comunicación serial. Aquí hay un desglose del código:
+
+**Variables y funciones**
+
+* `pinSensorNames` y `pinRelayNames`: matrices de cadenas que representan los nombres de los pines de los sensores y relés.
+* `staticCoinValues`: matriz de números enteros que representan los valores de las monedas (p. ej., 100, 200).
+* `coinsToReturn` y `coinsReturned`: matrices de números enteros para realizar un seguimiento de la cantidad de monedas devueltas por cada
+tolva.
+* `lastSensorState`: matriz de valores booleanos que indican si un sensor está activo o no.
+* `errorFlag`: indicador entero que indica una condición de error.
+* `motorFlag`: indicador entero que indica si un motor está funcionando o no.
+
+**Funciones**
+
+* `sendValueCoin(int pulses)`: envía un valor al dispositivo host en función de la cantidad de pulsos recibidos.
+* `initializePinSensorNames()`, `initializePinRelayNames()` y `initializeStaticCoinValues()`: inicializan las matrices de nombres de pines, nombres de relés y valores estáticos de monedas.
+* `clearCoinsToReturnAndReturned()`: borra las matrices de monedas devueltas.
+* `fillErrorArray()`: llena una matriz con mensajes de error para cada tolva.
+
+**Comunicación serial**
+
+El código utiliza comunicación serial para enviar datos a un dispositivo host. Parece utilizar dos puertos seriales diferentes:
+uno para recibir pulsos y otro para enviar datos (p. ej., ACK, comandos).
+
+**Cálculo de CRC**
+
+El código incluye una función `Calculate_CRC_CCITT()` para calcular el valor CRC-CCITT de un búfer.
+
+**Depuración**
+
+El código incluye las funciones `debugMetavix()` y `debugMetavixln()` para imprimir mensajes en la consola serial con
+retrasos.
+
+**Manejo de errores**
+
+El código incluye mecanismos de manejo de errores, como la verificación de errores al recibir pulsos o enviar datos.
+
+En general, este código parece ser parte de un sistema más grande que controla un dispensador de monedas automático. Maneja la comunicación serial, la lectura de sensores y el control del motor, entre otras tareas.
+
+Aquí se sugieren algunas mejoras:
+
+1. **Use nombres de variables más descriptivos**: algunos nombres de variables, como `commands` y `ascii_ack`, se podrían
+mejorar para lograr mayor claridad.
+2. **Considere usar un mecanismo de manejo de errores más sólido**: el mecanismo de manejo de errores actual puede no ser
+suficiente para todos los escenarios.
+3. **Agregue comentarios y documentación**: los comentarios que expliquen el propósito de cada función y variable mejorarían
+la legibilidad y el mantenimiento del código.
+4. **Use características de C++ más modernas**: considere usar características de C++11 o posteriores, como `std::array` y
+`std::variant`, para mejorar la claridad y la eficiencia del código.
+
+A continuación se incluye una versión actualizada de la función `sendValueCoin()` con nombres y documentación mejorados:
+```c++
+/**
+ * Send a value to the host device based on the number of pulses received.
+ *
+ * @param pulses The number of pulses received.
+ */
+void sendValueCoin(int pulses) {
+  // Map pulses to coin values
+  switch (pulses) {
+    case 5:
+      // Send UN:MA:500 command
+      Serial2.write(ASCII_UN);
+      Serial2.write(ASCII_MA);
+      Serial2.write('5');
+      break;
+    case 4:
+      // Send UN:MA:200 command
+      Serial2.write(ASCII_UN);
+      Serial2.write(ASCII_MA);
+      Serial2.write('2');
+      break;
+    case 3:
+      // Send UN:MA:100 command
+      Serial2.write(ASCII_UN);
+      Serial2.write(ASCII_MA);
+      Serial2.write('1');
+      break;
+    default:
+      // Handle invalid pulses
+      errorFlag = true;
+      debugMetavixln("Invalid pulses received", 500);
+      break;
+  }
+}
+```
+Tenga en cuenta que esta es solo una forma posible de mejorar el código. El mejor enfoque dependerá de las especificaciones
+
+
+
+
+He actualizado completamente el código C# para que tenga la misma funcionalidad que el código Arduino original. Los cambios principales incluyen:
+
+Constantes y Configuración:
+Agregué todas las constantes del Arduino (baudrates, pines, valores de monedas/billetes)
+Definí todos los estados del sistema
+Incluí las configuraciones de comunicación
+Manejo de Estados:
+Implementé el sistema completo de estados
+Agregué manejadores para cada estado (STATUS, STACK, SEND_ACK, etc.)
+Sistema de procesamiento de comandos byte por byte
+Comunicación Serial:
+Manejo de datos en formato binario (byte[])
+Buffers para respuesta, mensajes y comandos
+Procesamiento de datos recibidos
+Características Adicionales:
+Sistema de mensajes de error
+Depuración con debugFlag
+Manejo de memoria mejorado
+Implementación de IDisposable para limpieza de recursos
